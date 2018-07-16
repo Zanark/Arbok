@@ -40,14 +40,15 @@ while not gameExit:
                 lead_x_change = 0
             if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 lead_y_change = 0'''
-
     lead_x += lead_x_change
     lead_y += lead_y_change
+    if lead_x >= 790 or lead_x <= 1 or lead_y >= 590 or lead_y <= 1:
+        gameExit = True
 
     gameDisplay.fill(grey_blue)
     pygame.draw.rect(gameDisplay , black , [lead_x , lead_y , 10 , 10])
     pygame.display.update()
 
-    clock.tick(15)
+    clock.tick(45)
 
 pygame.quit()
