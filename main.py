@@ -1,5 +1,6 @@
 import pygame   #importing package pygame
 import time     #importing package time
+import random   #importing package random
 
 pygame.init()   #initialising class
 #print (x)
@@ -24,6 +25,15 @@ def msg_display(text , color):          #function to display the passed on text 
     message = font.render(text , True , color)
     gameDisplay.blit(message, [30 , display_height/2 - 10])
 
+def snake(snake_width , snake_list):
+    for point in snake_list:
+        pygame.draw.rect(gameDisplay , black , [point[0] , point[1] , snake_width , snake_width]) #Arbok
+
+def snake_food(food_x , food_y , food_width):
+    pygame.draw.rect(gameDisplay , red , [food_x , food_y , food_width , food_width]) #Food
+
+
+
 def GameLoop():
 
     gameExit = False                        #Boolean value to determine when to exit the Game
@@ -32,8 +42,13 @@ def GameLoop():
     lead_y = display_height/2               #y head
     lead_x_change = 0                       #change in x
     lead_y_change = 0                       #change in y
-    snake_width = 10                        #snakes width
-    crawl_size = 5                          #crawl distance in each step
+    snake_width = 10                        #snake's width
+    food_width = 10                         #food's width
+    crawl_size = 10                          #crawl distance in each step
+    food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
+    food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
+    snake_list = []
+    snake_length = 5
 
     while not gameExit:         #game loop
 
@@ -82,10 +97,25 @@ def GameLoop():
         if lead_x >= display_width - 10 or lead_x <= 2 or lead_y >= display_height - 10 or lead_y <= 2:    #to check if the dot exceeds or touches the boundaries
             gameOver = True
 
-        gameDisplay.fill(grey_blue)     #making the background grey-blue
-        pygame.draw.rect(gameDisplay , black , [lead_x , lead_y , snake_width , snake_width])     #Drawing a rectangle
-        pygame.display.update()     #updating the screen
+        #snake_list = []
+        snake_head = []
+        snake_head.append(lead_x)
+        snake_head.append(lead_y)
+        snake_list.append(snake_head)
+        
+        gameDisplay.fill(grey_blue)                     #making the background grey-blue
+        #msg_display(str(food_x)+" , "+str(food_y) , black)
+        snake_food(food_x , food_y , food_width)        #food drwaing function
 
+        if(len(snake_list)>snake_length):
+            del snake_list[0]
+        snake(snake_width , snake_list)            #snake drawing function
+        pygame.display.update()                         #updating the screen
+
+        if lead_x == food_x and lead_y == food_y:
+            food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
+            food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
+            #snake_list.append([lead_x_change , lead_y_change])  
         clock.tick(fps)  #fps
 
 
