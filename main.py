@@ -7,7 +7,7 @@ pygame.init()   #initialising class
 
 display_width = 800     #width of the screen
 display_height = 600    #height of the screen
-fps  = 15               #fps
+fps  = 35               #fps
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))    #Game screen
 pygame.display.set_caption('ARBOK')                 #Game Title
@@ -49,7 +49,7 @@ def GameLoop():
     lead_x_change = 0                       #change in x
     lead_y_change = 0                       #change in y
     snake_width = 10                        #snake's width
-    food_width = 10                         #food's width
+    food_width = 20                         #food's width
     crawl_size = 10                          #crawl distance in each step
     food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
     food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
@@ -124,11 +124,12 @@ def GameLoop():
         snake(snake_width , snake_list , snake_length)            #snake drawing function
         pygame.display.update()                         #updating the screen
 
-        if lead_x == food_x and lead_y == food_y:
-            food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
-            food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
-            #snake_list.append([lead_x_change , lead_y_change])  
-            snake_length += 1
+        if lead_x >= food_x and lead_x <= food_x + food_width:
+            if lead_y >= food_y and lead_y <= food_y + food_width:
+                food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
+                food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
+                #snake_list.append([lead_x_change , lead_y_change])  
+                snake_length += 1
 
         clock.tick(fps)  #fps
 
