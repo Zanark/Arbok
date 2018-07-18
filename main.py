@@ -7,7 +7,7 @@ pygame.init()   #initialising class
 
 display_width = 800     #width of the screen
 display_height = 600    #height of the screen
-fps  = 25               #fps
+fps  = 15               #fps
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))    #Game screen
 pygame.display.set_caption('ARBOK')                 #Game Title
@@ -16,6 +16,7 @@ grey_blue = (171, 186, 209)                         #Grey blue color constant
 black = (0 , 0 , 0)                                 #Black color constant
 red = (255 , 0 , 0)                                 #Red color constant
 white = (255 , 255 , 255)                           #White color constant
+yellow = (249, 151, 48)
 
 clock = pygame.time.Clock()                         #for fps
 
@@ -25,9 +26,14 @@ def msg_display(text , color):          #function to display the passed on text 
     message = font.render(text , True , color)
     gameDisplay.blit(message, [30 , display_height/2 - 10])
 
-def snake(snake_width , snake_list):
+def snake(snake_width , snake_list, snake_length):
     for point in snake_list:
-        pygame.draw.rect(gameDisplay , black , [point[0] , point[1] , snake_width , snake_width]) #Arbok
+        if(snake_list.index(point) == snake_length-1):
+            b_color = yellow
+        else:
+            b_color = black
+        pygame.draw.rect(gameDisplay , b_color , [point[0] , point[1] , snake_width , snake_width]) #Arbok
+        #print(str(snake_list.index(point)))
 
 def snake_food(food_x , food_y , food_width):
     pygame.draw.rect(gameDisplay , red , [food_x , food_y , food_width , food_width]) #Food
@@ -48,7 +54,7 @@ def GameLoop():
     food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
     food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
     snake_list = []
-    snake_length = 5
+    snake_length = 1
 
     while not gameExit:         #game loop
 
@@ -102,20 +108,28 @@ def GameLoop():
         snake_head.append(lead_x)
         snake_head.append(lead_y)
         snake_list.append(snake_head)
-        
+                
         gameDisplay.fill(grey_blue)                     #making the background grey-blue
         #msg_display(str(food_x)+" , "+str(food_y) , black)
         snake_food(food_x , food_y , food_width)        #food drwaing function
 
         if(len(snake_list)>snake_length):
             del snake_list[0]
-        snake(snake_width , snake_list)            #snake drawing function
+
+        for body_part in snake_list[:-1]:
+            if(body_part == snake_head):
+                print("snake_head>>" + str(snake_head) + "\tbody part>>" + str(body_part))
+                gameOver = True
+
+        snake(snake_width , snake_list , snake_length)            #snake drawing function
         pygame.display.update()                         #updating the screen
 
         if lead_x == food_x and lead_y == food_y:
             food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
             food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
             #snake_list.append([lead_x_change , lead_y_change])  
+            snake_length += 1
+
         clock.tick(fps)  #fps
 
 
