@@ -10,7 +10,7 @@ pygame.init()   #initialising class
 
 display_width = 800     #width of the screen
 display_height = 600    #height of the screen
-fps  = 35               #fps
+fps  = 30               #fps
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))    #Game screen
 pygame.display.set_caption('ARBOK')                 #Game Title
@@ -23,11 +23,18 @@ yellow = (249, 151, 48)
 
 clock = pygame.time.Clock()                         #for fps
 
-font = pygame.font.SysFont(None , 40)  #setting font for display message
+font = pygame.font.Font('Digital_tech.otf' , 30 )  #setting font for display message
+
+def text_objects(message , color):
+    textSurface = font.render(message , True , color)
+    return textSurface , textSurface.get_rect()
 
 def msg_display(text , color):          #function to display the passed on text on the screen
-    message = font.render(text , True , color)
-    gameDisplay.blit(message, [30 , display_height/2 - 10])
+    textSurface , textRect = text_objects(text,color)
+    textRect.center = (display_width/2) , (display_height/2)
+    gameDisplay.blit(textSurface , textRect)
+    #message = font.render(text , True , color)
+    #gameDisplay.blit(message, [30 , display_height/2 - 10])
 
 def snake(snake_width , snake_list, snake_length):
     for point in snake_list:
@@ -54,8 +61,8 @@ def GameLoop():
     snake_width = 10                        #snake's width
     food_width = 20                         #food's width
     crawl_size = 10                          #crawl distance in each step
-    food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
-    food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
+    food_x = round(random.randrange(30 , display_width-30))#/10.00)*10.00    #random coordinates for food location
+    food_y = round(random.randrange(30 , display_height-30))#/10.00)*10.00
     snake_list = []
     snake_length = 1
 
@@ -130,12 +137,22 @@ def GameLoop():
         snake(snake_width , snake_list , snake_length)            #snake drawing function
         pygame.display.update()                         #updating the screen
 
-        if lead_x >= food_x and lead_x <= food_x + food_width:
-            if lead_y >= food_y and lead_y <= food_y + food_width:
-                food_x = round(random.randrange(30 , display_width-30)/10.00)*10.00    #random coordinates for food location
-                food_y = round(random.randrange(30 , display_height-30)/10.00)*10.00
+        '''if lead_x >= food_x and lead_x <= food_x + food_width:
+                if lead_y >= food_y and lead_y <= food_y + food_width:
+                    food_x = round(random.randrange(30 , display_width-30))#/10.00)*10.00    #random coordinates for food location
+                    food_y = round(random.randrange(30 , display_height-30))#/10.00)*10.00
+                    #snake_list.append([lead_x_change , lead_y_change])  
+                    snake_length += 1'''
+
+        if lead_x > food_x and lead_x < food_x + food_width or lead_x + snake_width > food_x and lead_x + snake_width < food_x + food_width:
+            if lead_y > food_y and lead_y < food_y + food_width or lead_y + snake_width > food_y and lead_y + snake_width < food_y + food_width:
+                food_x = round(random.randrange(30 , display_width-30))#/10.00)*10.00    #random coordinates for food location
+                food_y = round(random.randrange(30 , display_height-30))#/10.00)*10.00
                 #snake_list.append([lead_x_change , lead_y_change])  
                 snake_length += 1
+
+        
+
 
         clock.tick(fps)  #fps
 
