@@ -5,6 +5,9 @@ import random   #importing package random
 pygame.init()   #initialising class
 #print (x)
 
+#pygame.mixer.music.load("pallet_town.mp3") 
+#pygame.mixer.music.play(-1,0.0)
+
 display_width = 800     #width of the screen
 display_height = 600    #height of the screen
 fps  = 35               #fps
@@ -64,6 +67,9 @@ def GameLoop():
             pygame.display.update()     #updating the screen
 
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:           #if the cross button is clicked
+                    gameOver = False
+                    gameExit = True                     #exit
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         gameExit = True
