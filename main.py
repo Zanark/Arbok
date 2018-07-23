@@ -8,9 +8,14 @@ pygame.init()   #initialising class
 #pygame.mixer.music.load("pallet_town.mp3") 
 #pygame.mixer.music.play(-1,0.0)
 
+snake_img_head = pygame.image.load('snake-head.png')
+snake_img_body = pygame.image.load('snake_body.png')
+snake_img_tail = pygame.image.load('snake_tail.png')
+food_img = pygame.image.load('food.png')
+
 display_width = 800     #width of the screen
 display_height = 600    #height of the screen
-fps  = 30               #fps
+fps  = 1               #fps
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))    #Game screen
 pygame.display.set_caption('ARBOK')                 #Game Title
@@ -20,6 +25,8 @@ black = (0 , 0 , 0)                                 #Black color constant
 red = (255 , 0 , 0)                                 #Red color constant
 white = (255 , 255 , 255)                           #White color constant
 yellow = (249, 151, 48)
+snake_green = (106,158,104)
+direction = "none"
 
 clock = pygame.time.Clock()                         #for fps
 
@@ -36,35 +43,70 @@ def msg_display(text , color):          #function to display the passed on text 
     #message = font.render(text , True , color)
     #gameDisplay.blit(message, [30 , display_height/2 - 10])
 
-def snake(snake_width , snake_list, snake_length):
-    for point in snake_list:
-        if(snake_list.index(point) == snake_length-1):
-            b_color = yellow
+def snake(snake_width , snake_list, snake_length , direction , body_directions):
+
+    if(direction == "right"):
+        head = pygame.transform.rotate(snake_img_head , 270)
+    elif(direction == "left"):
+        head = pygame.transform.rotate(snake_img_head , 90)
+    elif(direction == "up"):
+        head = pygame.transform.rotate(snake_img_head , 0)
+    elif(direction == "down"):
+        head = pygame.transform.rotate(snake_img_head , 180)
+    elif(direction == "none"):
+        head = pygame.transform.rotate(snake_img_head , 0)
+
+    gameDisplay.blit(head , (snake_list[-1][0] , snake_list[-1][1]))
+
+    for point in snake_list[:-1]:
+
+        for direc in body_directions[:-1]:
+            if(direc == "right"):
+                body = pygame.transform.rotate(snake_img_body , 270)
+                tail = pygame.transform.rotate(snake_img_tail , 270)
+            elif(direc == "left"):
+                body = pygame.transform.rotate(snake_img_body , 90)
+                tail = pygame.transform.rotate(snake_img_tail , 270)
+            elif(direc == "up"):
+                body = pygame.transform.rotate(snake_img_body , 0)
+                tail = pygame.transform.rotate(snake_img_tail , 270)
+            elif(direc == "down"):
+                body = pygame.transform.rotate(snake_img_body , 180)
+                tail = pygame.transform.rotate(snake_img_tail , 270)
+            elif(direc == "none"):
+                body = pygame.transform.rotate(snake_img_body , 0)
+                tail = pygame.transform.rotate(snake_img_tail , 270)
+
+        if(snake_list.index(point) == 0):
+            gameDisplay.blit(tail , (point[0] , point[1]))
         else:
-            b_color = black
-        pygame.draw.rect(gameDisplay , b_color , [point[0] , point[1] , snake_width , snake_width]) #Arbok
+            gameDisplay.blit(body ,  (point[0] , point[1])) #Arbok
         #print(str(snake_list.index(point)))
 
+
+
 def snake_food(food_x , food_y , food_width):
-    pygame.draw.rect(gameDisplay , red , [food_x , food_y , food_width , food_width]) #Food
+    gameDisplay.blit(food_img , (food_x , food_y)) #Food
 
 
 
 def GameLoop():
 
+    global direction                        #Direction variable
     gameExit = False                        #Boolean value to determine when to exit the Game
     gameOver = False                        #Boolean value for the game over screen display
     lead_x = display_width/2                #x head
     lead_y = display_height/2               #y head
     lead_x_change = 0                       #change in x
     lead_y_change = 0                       #change in y
-    snake_width = 10                        #snake's width
-    food_width = 20                         #food's width
-    crawl_size = 10                          #crawl distance in each step
+    snake_width = 20                        #snake's width
+    food_width = 30                         #food's width
+    crawl_size = 20                          #crawl distance in each step
     food_x = round(random.randrange(30 , display_width-30))#/10.00)*10.00    #random coordinates for food location
     food_y = round(random.randrange(30 , display_height-30))#/10.00)*10.00
     snake_list = []
     snake_length = 1
+    snake_body_directions = ['none']
 
     while not gameExit:         #game loop
 
@@ -94,15 +136,19 @@ def GameLoop():
                 if event.key == pygame.K_LEFT:      #If LEFT ARROW KEY is pressed
                     lead_x_change = -crawl_size     #go left by 5 pixels
                     lead_y_change = 0               #change in y direction should be zero or else we will have diagonal movement
+                    direction = 'left'              #rotating head of the snake
                 elif event.key == pygame.K_RIGHT:   #If RIGHT ARROW KEY is pressed
                     lead_x_change = crawl_size               #go right by 5 pixels
                     lead_y_change = 0               #---same---
+                    direction = 'right'
                 elif event.key == pygame.K_UP:      #If UP ARROW KEY is pressed
                     lead_y_change = -crawl_size     #go up by 5 pixels
                     lead_x_change = 0
+                    direction = 'up'
                 elif event.key == pygame.K_DOWN:    #If DOWN ARROW KEY is pressed
                     lead_y_change = crawl_size      #go down by 5 pixels
                     lead_x_change = 0
+                    direction = 'down'
 
             '''if event.type == pygame.KEYUP:       #If pressed key has been lifted
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:   #if its the left or right arrow key
@@ -121,6 +167,7 @@ def GameLoop():
         snake_head.append(lead_x)
         snake_head.append(lead_y)
         snake_list.append(snake_head)
+        snake_body_directions.append(direction)
                 
         gameDisplay.fill(grey_blue)                     #making the background grey-blue
         #msg_display(str(food_x)+" , "+str(food_y) , black)
@@ -128,13 +175,14 @@ def GameLoop():
 
         if(len(snake_list)>snake_length):
             del snake_list[0]
+            del snake_body_directions[0]
 
         for body_part in snake_list[:-1]:
             if(body_part == snake_head):
                 print("snake_head>>" + str(snake_head) + "\tbody part>>" + str(body_part))
                 gameOver = True
 
-        snake(snake_width , snake_list , snake_length)            #snake drawing function
+        snake(snake_width , snake_list , snake_length , direction , snake_body_directions)            #snake drawing function
         pygame.display.update()                         #updating the screen
 
         '''if lead_x >= food_x and lead_x <= food_x + food_width:
