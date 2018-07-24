@@ -15,7 +15,7 @@ food_img = pygame.image.load('food.png')
 
 display_width = 800     #width of the screen
 display_height = 600    #height of the screen
-fps  = 1               #fps
+fps  = 20               #fps
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))    #Game screen
 pygame.display.set_caption('ARBOK')                 #Game Title
@@ -66,16 +66,16 @@ def snake(snake_width , snake_list, snake_length , direction , body_directions):
                 tail = pygame.transform.rotate(snake_img_tail , 270)
             elif(direc == "left"):
                 body = pygame.transform.rotate(snake_img_body , 90)
-                tail = pygame.transform.rotate(snake_img_tail , 270)
+                tail = pygame.transform.rotate(snake_img_tail , 90)
             elif(direc == "up"):
                 body = pygame.transform.rotate(snake_img_body , 0)
-                tail = pygame.transform.rotate(snake_img_tail , 270)
+                tail = pygame.transform.rotate(snake_img_tail , 0)
             elif(direc == "down"):
                 body = pygame.transform.rotate(snake_img_body , 180)
-                tail = pygame.transform.rotate(snake_img_tail , 270)
+                tail = pygame.transform.rotate(snake_img_tail , 180)
             elif(direc == "none"):
                 body = pygame.transform.rotate(snake_img_body , 0)
-                tail = pygame.transform.rotate(snake_img_tail , 270)
+                tail = pygame.transform.rotate(snake_img_tail , 0)
 
         if(snake_list.index(point) == 0):
             gameDisplay.blit(tail , (point[0] , point[1]))
@@ -133,19 +133,19 @@ def GameLoop():
             if event.type == pygame.QUIT:           #if the cross button is clicked
                 gameExit = True                     #exit
             if event.type == pygame.KEYDOWN:        #If any key is pressed
-                if event.key == pygame.K_LEFT:      #If LEFT ARROW KEY is pressed
+                if event.key == pygame.K_LEFT and direction != 'right':      #If LEFT ARROW KEY is pressed
                     lead_x_change = -crawl_size     #go left by 5 pixels
                     lead_y_change = 0               #change in y direction should be zero or else we will have diagonal movement
                     direction = 'left'              #rotating head of the snake
-                elif event.key == pygame.K_RIGHT:   #If RIGHT ARROW KEY is pressed
+                elif event.key == pygame.K_RIGHT and direction != 'left':   #If RIGHT ARROW KEY is pressed
                     lead_x_change = crawl_size               #go right by 5 pixels
                     lead_y_change = 0               #---same---
                     direction = 'right'
-                elif event.key == pygame.K_UP:      #If UP ARROW KEY is pressed
+                elif event.key == pygame.K_UP and direction != 'down':      #If UP ARROW KEY is pressed
                     lead_y_change = -crawl_size     #go up by 5 pixels
                     lead_x_change = 0
                     direction = 'up'
-                elif event.key == pygame.K_DOWN:    #If DOWN ARROW KEY is pressed
+                elif event.key == pygame.K_DOWN and direction != 'up':    #If DOWN ARROW KEY is pressed
                     lead_y_change = crawl_size      #go down by 5 pixels
                     lead_x_change = 0
                     direction = 'down'
