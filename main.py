@@ -12,6 +12,7 @@ snake_img_head = pygame.image.load('snake-head.png')
 snake_img_body = pygame.image.load('snake_body.png')
 snake_img_tail = pygame.image.load('snake_tail.png')
 food_img = pygame.image.load('food.png')
+game_icon = pygame.image.load('game_logo.png')
 
 display_width = 800     #width of the screen
 display_height = 600    #height of the screen
@@ -19,29 +20,61 @@ fps  = 20               #fps
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))    #Game screen
 pygame.display.set_caption('ARBOK')                 #Game Title
+pygame.display.set_icon(game_icon)                  #Game LOGO
 
 grey_blue = (171, 186, 209)                         #Grey blue color constant
 black = (0 , 0 , 0)                                 #Black color constant
-red = (255 , 0 , 0)                                 #Red color constant
+red = (255 , 105 , 105)                                 #Red color constant
 white = (255 , 255 , 255)                           #White color constant
-yellow = (249, 151, 48)
+yellow = (255, 255, 0)
 snake_green = (106,158,104)
 direction = "none"
 
 clock = pygame.time.Clock()                         #for fps
 
-font = pygame.font.Font('Digital_tech.otf' , 30 )  #setting font for display message
+#font = pygame.font.Font('Digital_tech.otf' , 30 )           #setting font for display message
+#intro_font = pygame.font.Font('SuperMario256.ttf' , 40)     #Setting font for intro message
 
-def text_objects(message , color):
+def text_objects(message , color , font , size):
+    font = pygame.font.Font(font , size )     
     textSurface = font.render(message , True , color)
     return textSurface , textSurface.get_rect()
 
-def msg_display(text , color):          #function to display the passed on text on the screen
-    textSurface , textRect = text_objects(text,color)
-    textRect.center = (display_width/2) , (display_height/2)
+def msg_display(text , color , font , size , y_displace = 0 , x_displace = 0):          #function to display the passed on text on the screen
+    textSurface , textRect = text_objects(text,color,font,size)
+    textRect.center = (display_width/2) + x_displace , (display_height/2) + y_displace
     gameDisplay.blit(textSurface , textRect)
     #message = font.render(text , True , color)
     #gameDisplay.blit(message, [30 , display_height/2 - 10])
+
+def game_intro():
+    intro = True
+    
+    while intro:
+
+        for event in pygame.event.get():            #fetching events
+            if event.type == pygame.QUIT:           #if the cross button is clicked
+                gameExit = True                     #exit
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                     intro = False
+                if event.key == pygame.K_q:
+                    pygame.quit()                    
+
+        gameDisplay.fill(white)
+        msg_display('ARBOK' , snake_green , 'SuperMario256.ttf' , 100 , -50)
+        msg_display('Created by Debashish Mishra' , black , 'Digital_tech.otf' , 20 , 50)
+        msg_display('Press S to START' , snake_green , 'Digital_tech.otf' , 50 , 110)
+        msg_display('Press Q to QUIT' , red , 'Digital_tech.otf' , 50 , 200)
+
+        pygame.display.update()
+        clock.tick(10)
+
+def score(score):
+    msg_display('Score :    ' + str(score) , red , 'digital-7.ttf' , 30 ,  -250 , -250)
+    pygame.display.update()
+    
+
 
 def snake(snake_width , snake_list, snake_length , direction , body_directions):
 
@@ -112,7 +145,9 @@ def GameLoop():
 
         while gameOver == True:
             gameDisplay.fill(red)
-            msg_display("GAME OVER MOFO!! Press R to Replay or Q to Quit" , white)
+            msg_display("GAME OVER MOFO" , white , 'Digital_tech.otf' , 80 , -100)
+            msg_display("PRESS R to PLAY AGAIN" , yellow , 'Digital_tech.otf' , 50 , 70 )
+            msg_display("PRESS Q to QUIT" , black , 'Digital_tech.otf' , 50  , 150)
             pygame.display.update()     #updating the screen
 
             for event in pygame.event.get():
@@ -183,6 +218,7 @@ def GameLoop():
                 gameOver = True
 
         snake(snake_width , snake_list , snake_length , direction , snake_body_directions)            #snake drawing function
+        score(snake_length-1)                           #score
         pygame.display.update()                         #updating the screen
 
         '''if lead_x >= food_x and lead_x <= food_x + food_width:
@@ -206,5 +242,5 @@ def GameLoop():
 
 
     pygame.quit()   #package quit
-
+game_intro()
 GameLoop()
