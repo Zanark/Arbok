@@ -1,2 +1,2 @@
 # Python-Game
-A game using Python.
+A snake game using Python.
